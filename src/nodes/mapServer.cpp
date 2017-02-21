@@ -3,16 +3,17 @@
 #include "mapserver/getMarkPos.h"
 #include "../map.h"
 
-
 Map g_map;
+
 
 bool getMarkingPosition(mapserver::getMarkPos::Request &req,
                    mapserver::getMarkPos::Response &res)
 {
-//    Map g_map;
     int id, x, y = 0;
     id = (int) req.id;
     g_map.getMarkingPos(id,x,y);
+    res.x = x;
+    res.y = y;
     ROS_INFO("request id: %d", req.id);
     ROS_INFO("markpos: (%d,%d)",res.x, res.y);
     return true;

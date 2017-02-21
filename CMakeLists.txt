@@ -12,6 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+SET(GCC_COVERAGE_COMPILE_FLAGS "-std=gnu++11")
+add_definitions(${GCC_COVERAGE_COMPILE_FLAGS})
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -99,10 +101,10 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES mapserver
-#  CATKIN_DEPENDS roscpp std_msgs
-#  DEPENDS system_lib
+  CATKIN_DEPENDS roscpp std_msgs
+  DEPENDS system_lib
 )
 
 ###########
@@ -127,9 +129,19 @@ include_directories(
 # add_dependencies(mapserver ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(mapServer src/nodes/mapServer.cpp)
-target_link_libraries(mapServer ${catkin_LIBRARIES})
+add_executable(mapServer src/nodes/mapServer.cpp src/map.cpp)
+target_link_libraries(mapServer ${catkin_LIBRARIES} ${${mapserver}/src})
 add_dependencies(mapServer mapserver_gencpp)
+
+
+
+#link_directories(src/${mapserver}/src)
+
+
+#add_executable(lane_error_publisher src/nodes/lane_error_publisher.cpp src/laneDetection.cpp)
+#target_link_libraries(lane_error_publisher ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+#add_dependencies(lane_error_publisher position_estimation_generate_messages_cpp)
+
 
 add_executable(mapClient src/nodes/mapClient.cpp)
 target_link_libraries(mapClient ${catkin_LIBRARIES})

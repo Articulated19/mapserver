@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <limits.h>
+#include <unistd.h>
 
 #define POLY_START      "BEGIN POLYGON"
 #define POLY_END        "END POLYGON"
@@ -43,6 +45,7 @@ class Map{
         void printMap();
         void getMarkingPos(int id, int &x, int &y);
         bool isPosInPoly(Polygon *poly, int x, int y);
+        string getexepath();
         Map();        
         
     private:

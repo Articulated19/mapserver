@@ -97,6 +97,8 @@ void Map::getMarkingPos(int id, int &x, int &y)
             return;
         }
     }
+    x = -1;
+    y = -1;
 }
 
 
@@ -119,12 +121,33 @@ bool Map::isPosInPoly(Polygon *poly, int x, int y)
     return c;
 }
 
+
+string Map::getexepath()
+{
+  char result[ PATH_MAX ];
+  ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
+  return std::string( result, (count > 0) ? count : 0 );
+}
+
 Map::Map()
 {	
-    ifstream in("db.db");
+    string executionPath = getexepath();
+    string lok = "devel";
+    int splitIndex = 0;
+    for(int i = 0; i < executionPath.length(); i++){
+        if(executionPath[i] == '/'){
+            if(!executionPath.substr(i,6).compare(lok)){
+                splitIndex = i;
+                break;
+            }
+        }
+    }
+    string path = executionPath.substr(0,splitIndex) + "src/mapserver/src/db.db";
+
+    ifstream in(path);
 
     if(!in){
-        cout << "Cannot open input file";
+        cout << "Cannot open input file" << endl;
     }
 	
 	string str;
@@ -148,7 +171,7 @@ Map::Map()
     }
 }
 
-
+/*
 int main()
 {
     Map map;
@@ -207,6 +230,4 @@ int main()
 
 
 
-
-
-
+*/

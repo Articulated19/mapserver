@@ -45,15 +45,21 @@ void Map::createPoly(ifstream &in, Polygon &poly)
             poly.allowedInside = true;
         }else if(str.find(POLY_OUTSIDE) != string::npos){
             poly.allowedInside = false;
-		}else{            
-            
+		}else{                        
             str.erase(remove(str.begin(), str.end(), ' '), str.end()); // remove all white spaces
             size_t index = str.find(',');
 
-            int x = stoi(str.substr(0,index));
-            int y = stoi(str.substr(index+1,str.length()-index));
-
-			struct Node node;
+            int x, y;
+            try {
+                x = stoi(str.substr(0,index));
+                y = stoi(str.substr(index+1,str.length()-index));
+            } catch(...) {
+                cout << "ERROR: TRIED PARSING A STRING TO A DIGIT" << endl;
+                struct Polygon errpoly;
+                poly = errpoly;
+                return;
+            }
+            struct Node node;
             node.id = nodeCounter;
             node.x = x;
             node.y = y;
@@ -77,7 +83,8 @@ void Map::createMarking(ifstream &in, Marking &marking)
     marking.y = stoi(str.substr(index+1,str.length()-index));
     getline(in,str);
     if(str.compare(MARKING_END)){
-        cout << "Something wrong with a marking.." << str << endl;
+        cerr << "Something wrong with a marking.." << str << endl;
+        marking.x = -1; marking.y = -1; marking.id = -1;
     }    
 }
 
@@ -180,7 +187,7 @@ Map::Map()
             continue;
         }            
         
-		if(!str.compare(POLY_START)){
+        if(!str.compare(POLY_START)){
             struct Polygon poly;
             createPoly(in, poly);
             polygons.push_back(poly);
@@ -188,7 +195,7 @@ Map::Map()
             struct Marking marking;
             createMarking(in, marking);
             markings.push_back(marking);
-		}else if(!str.empty()){
+        }else if(!str.empty()){
             cout << "Can't parse line: " << str << endl;
         }       
     }

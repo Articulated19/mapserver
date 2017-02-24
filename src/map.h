@@ -12,6 +12,8 @@
 
 #define POLY_START      "BEGIN POLYGON"
 #define POLY_END        "END POLYGON"
+#define POLY_INSIDE     "INSIDE"
+#define POLY_OUTSIDE    "OUTSIDE"
 #define MARKING_START   "BEGIN MARKING"
 #define MARKING_END     "END MARKING" 
 #define COMMENT_SIGN    '#'
@@ -32,6 +34,7 @@ struct Node
 
 struct Polygon
 {
+    bool allowedInside;
     int numOfNodes;
 	vector<Node> nodes;
 };
@@ -45,6 +48,7 @@ class Map{
         void printMap();
         void getMarkingPos(int id, int &x, int &y);
         bool isPosInPoly(Polygon *poly, int x, int y);
+        void isForbiddenPos(int x, int y, bool &b);
         string getexepath();
         Map();        
         

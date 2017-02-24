@@ -56,6 +56,7 @@ add_definitions(${GCC_COVERAGE_COMPILE_FLAGS})
 add_service_files(
     FILES	
     getMarkPos.srv
+    isFPos.srv
 )
 
 ## Generate actions in the 'action' folder
@@ -134,13 +135,10 @@ target_link_libraries(mapServer ${catkin_LIBRARIES} ${${mapserver}/src})
 add_dependencies(mapServer mapserver_gencpp)
 
 
+add_executable(mapClientISFP src/nodes/mapClientISFP.cpp)
+target_link_libraries(mapClientISFP ${catkin_LIBRARIES} )
+add_dependencies(mapClientISFP mapserver_gencpp)
 
-#link_directories(src/${mapserver}/src)
-
-
-#add_executable(lane_error_publisher src/nodes/lane_error_publisher.cpp src/laneDetection.cpp)
-#target_link_libraries(lane_error_publisher ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-#add_dependencies(lane_error_publisher position_estimation_generate_messages_cpp)
 
 
 add_executable(mapClient src/nodes/mapClient.cpp)

@@ -37,9 +37,14 @@ void Map::createPoly(ifstream &in, Polygon &poly)
     int nodeCounter = 0;
 
     while(getline(in,str)){
+        cout << str << endl;
         if(!str.compare(POLY_END)){
             poly.numOfNodes = nodeCounter;
             return;
+        }else if(str.find(POLY_INSIDE) != string::npos){
+            poly.allowedInside = true;
+        }else if(str.find(POLY_OUTSIDE) != string::npos){
+            poly.allowedInside = false;
 		}else{            
             
             str.erase(remove(str.begin(), str.end(), ' '), str.end()); // remove all white spaces
@@ -54,12 +59,6 @@ void Map::createPoly(ifstream &in, Polygon &poly)
             node.y = y;
 			poly.nodes.push_back(node);
 
-            /*if(nodeCounter > 0){
-                struct Edge edge;
-                edge.node1 = poly.nodes.at(nodeCounter-1);
-                edge.node2 = node; 
-                poly.edges.push_back(edge);
-            }*/
             nodeCounter++;  
         }              
     }
@@ -101,7 +100,6 @@ void Map::getMarkingPos(int id, int &x, int &y)
     y = -1;
 }
 
-
 bool Map::isPosInPoly(Polygon *poly, int x, int y)
 {
     bool c = false;
@@ -112,6 +110,10 @@ bool Map::isPosInPoly(Polygon *poly, int x, int y)
         struct Node prevNode, curNode;        
         prevNode = poly->nodes.at(j);
         curNode = poly->nodes.at(i);
+        
+        if(curNode.x == x && curNode.y == y){
+            return true;
+        }
 
         if(((curNode.y > y) != (prevNode.y > y)) &&
             (x < (prevNode.x - curNode.x) * (y - curNode.y) / (prevNode.y - curNode.y) + curNode.x)){
@@ -121,6 +123,18 @@ bool Map::isPosInPoly(Polygon *poly, int x, int y)
     return c;
 }
 
+
+void Map::isForbiddenPos(int x, int y, bool &b)
+{
+    for(int i = 0; i < polygons.size(); i++){
+        cout << isPosInPoly(&polygons.at(i), x, y) << " " << polygons.at(i).allowedInside << endl;
+        if(isPosInPoly(&polygons.at(i), x, y) != polygons.at(i).allowedInside){
+            b = true;
+            return;
+        }
+    }
+    b = false;
+}
 
 string Map::getexepath()
 {
@@ -132,17 +146,26 @@ string Map::getexepath()
 Map::Map()
 {	
     string executionPath = getexepath();
-    string lok = "devel";
+
+    cout << "execution path: " << executionPath << endl;
+
+    string lookFor = "devel";
     int splitIndex = 0;
     for(int i = 0; i < executionPath.length(); i++){
         if(executionPath[i] == '/'){
-            if(!executionPath.substr(i,6).compare(lok)){
+            cout << "compare devel with : " << executionPath.substr(i+1,5) << endl;
+            if(!executionPath.substr(i+1,5).compare(lookFor)){
                 splitIndex = i;
                 break;
             }
         }
     }
-    string path = executionPath.substr(0,splitIndex) + "src/mapserver/src/db.db";
+
+    cout << "split index: " << splitIndex << endl;
+
+    string path = executionPath.substr(0,splitIndex) + "/src/mapserver/src/db.db";
+
+    cout << path << endl;
 
     ifstream in(path);
 
@@ -169,6 +192,7 @@ Map::Map()
             cout << "Can't parse line: " << str << endl;
         }       
     }
+    cout << "Created map" << endl;
 }
 
 /*

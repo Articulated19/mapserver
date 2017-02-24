@@ -5,20 +5,24 @@
 # A Polygon, each vertex coords on a new line, first vertex will get id 0,
 # the next id 1 and so on. It's important that they come in the right order.
 BEGIN POLYGON
+  INSIDE
   0,0
-  3,0
-  3,3
-  0,3
+  10,0
+  10,10
+  0,10
 END POLYGON
 
 
 BEGIN POLYGON
-  0,0
-  3,0
-  4,1
-  5,0
-  4,2
-  2,2  
+  OUTSIDE
+  2,2
+  3,2
+  3,5
+  5,5
+  5,2
+  7,2
+  7,8
+  2,8
 END POLYGON
 
 
